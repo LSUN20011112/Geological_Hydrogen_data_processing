@@ -60,5 +60,3 @@ if __name__ == "__main__":
     model_3d = convert_model_1d_to_3d(model_txt_path, mesh_txt_path, output_npy_path)
 
 
-
-
