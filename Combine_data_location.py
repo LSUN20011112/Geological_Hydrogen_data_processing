@@ -24,12 +24,19 @@ def read_mesh_header(mesh_file_path):
     hz = parse_cell_sizes(lines[4])
     return (nx, ny, nz), (x0, y0, z0), (hx, hy, hz)
 
-def compute_cell_centers(h_sizes, origin):
+def compute_cell_centers(h_sizes, origin, reverse=False):
     centers = []
     pos = origin
-    for h in h_sizes:
-        centers.append(pos + h / 2)
-        pos += h
+    if reverse:
+        # Z direction: decreasing from origin downwards
+        for h in h_sizes:
+            centers.append(pos - h / 2)
+            pos -= h
+    else:
+        # X, Y direction: increasing from origin
+        for h in h_sizes:
+            centers.append(pos + h / 2)
+            pos += h
     return np.array(centers)
 
 # === Main Processing Functions ===
@@ -53,7 +60,7 @@ def generate_xyz_from_models(diff_path, dens_path, susc_path, mesh_path, output_
     # compute the cell centers
     x_centers = compute_cell_centers(hx, x0)
     y_centers = compute_cell_centers(hy, y0)
-    z_centers = compute_cell_centers(hz, z0)
+    z_centers = compute_cell_centers(hz, z0, reverse=True)
 
     X, Y, Z = np.meshgrid(x_centers, y_centers, z_centers, indexing="ij")
 
@@ -83,7 +90,6 @@ output_npy_path = r"C:\Users\sunlo\Desktop\Geological_Hydrogen\merged_model_outp
 
 # === run ===
 generate_xyz_from_models(diff_path, dens_path, susc_path, mesh_path, output_xyz_path)
-
 
 
 
